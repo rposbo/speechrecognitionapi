@@ -5,7 +5,7 @@ var SpeechRecognition = SpeechRecognition || webkitSpeechRecognition;
 var recognition = new SpeechRecognition();
 recognition.continuous = true;
 recognition.lang = 'en-GB';
-recognition.interimResults = false;
+recognition.interimResults = true;
 recognition.maxAlternatives = 1;
 
 var state = 0;
