@@ -1,6 +1,6 @@
 <html>
 <head>
-  <title>6B</title>
+  <title>Portable Subtitles</title>
 <style>
 
 @font-face {
@@ -62,7 +62,7 @@
 <body>
 
 <h1 class="ribbon">
-   <strong class="ribbon-content" id="mywords"></strong>
+   <strong id="mywords"></strong>
 </h1>
   
 <div style="text-align:center;">
@@ -104,15 +104,25 @@ recognition.onresult = function(event) {
   console.log("onresult");
   console.log(event);
   
-  var result = event.results[0][0].transcript;
-  console.log(result);
-  words.innerText = result;
+  words.innerHTML = "";
+  var ul = document.createElement('ul');
+
+  for(var i=0; i<event.results.length; i++) {
+    if (event.results[i][0].confidence > 0) {
+      var li = document.createElement('li');
+      li.innerText = event.results[i][0].transcript;
+      ul.appendChild(li);
+    }
+  }
+
+  words.appendChild(ul);
+  window.scrollTo(0, words.offsetHeight)
 };
 
 recognition.onspeechend = function() {
   console.log("onspeechend");
   console.log(event);
-  recognition.stop();
+  stop();
 };
 
 recognition.onnomatch = function(event) {
