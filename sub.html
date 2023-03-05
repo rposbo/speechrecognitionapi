@@ -1,0 +1,95 @@
+<html>
+<head>
+  <title>Portable Subtitles</title>
+<style>
+
+@font-face {
+    font-family: ApercuBespoke;
+    src: url(fonts/BurberryApercuBespoke-Medium.otf) format("opentype"), url(fonts/BurberryApercuBespoke-Medium.ttf) format("truetype");
+    
+}
+
+.subtitles {
+ font-size: 4em !important;
+ font-family:ApercuBespoke;
+ /* This ribbon is based on a 16px font side and a 24px vertical rhythm. I've used em's to position each element for scalability. If you want to use a different font size you may have to play with the position of the ribbon elements */
+}
+</style>
+</head>
+<body>
+
+<div class="subtitles">
+   <strong id="mywords"></strong>
+</div>
+  
+<div style="text-align:center;">
+  <img id="mic" src="microphone.svg" width="200px" onclick="toggle();" />
+</div>
+
+<script>
+var words = document.querySelector('#mywords');
+var mic = document.querySelector('#mic');
+var SpeechRecognition = SpeechRecognition || webkitSpeechRecognition;
+
+var recognition = new SpeechRecognition();
+recognition.continuous = true;
+recognition.lang = 'en-GB';
+recognition.interimResults = true;
+recognition.maxAlternatives = 1;
+
+var state = 0;
+const toggle = _ => {
+  if (!state){start();}
+  else {stop();}
+};
+
+const start = _ => {
+  mic.style = "filter:invert(.8);"
+  recognition.start();
+  console.log('I\'m listening.');
+  state = 1;
+};
+
+const stop = _ => {
+  mic.style = "filter:invert(0);"
+  recognition.stop();
+  console.log('I\'m ignoring you.');
+  state = 0;
+};
+
+recognition.onresult = function(event) {
+  console.log("onresult");
+  console.log(event);
+  
+  words.innerHTML = "";
+  var subs = document.createElement('span');
+
+  for(var i=0; i<event.results.length; i++) {
+    if (event.results[i][0].confidence > 0) {
+      subs.innerText += event.results[i][0].transcript;
+    }
+  }
+
+  words.appendChild(subs);
+  window.scrollTo(0, words.offsetHeight)
+};
+
+recognition.onspeechend = function() {
+  console.log("onspeechend");
+  console.log(event);
+  stop();
+};
+
+recognition.onnomatch = function(event) {
+  console.log("onnomatch");
+  console.log(event);
+};
+
+recognition.onerror = function(event) {
+  console.log("onerror");
+  console.log(event);
+};
+
+</script>
+</body>
+</html>
